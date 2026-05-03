@@ -1,0 +1,11 @@
+services:
+  memory-mcp:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./memory:/app/memory
+      - ./data:/app/data
+    restart: unless-stopped
