@@ -1,7 +1,7 @@
-import { config } from '../config.js';
-import { openDatabase } from '../db.js';
-import { initializeVault } from '../markdown.js';
-import { reindexVault } from '../indexer.js';
+import { config } from '../config';
+import { openDatabase } from '../db';
+import { initializeVault } from '../markdown';
+import { reindexVault } from '../indexer';
 
 initializeVault(config.vaultPath);
 const db = openDatabase(config.databasePath);

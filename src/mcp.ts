@@ -1,8 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import * as z from 'zod/v4';
-import { requireScope } from './auth.js';
-import type { AuthContext } from './types.js';
-import { MemoryService } from './service.js';
+import { requireScope } from './auth';
+import type { AuthContext } from './types';
+import { MemoryService } from './service';
 
 const MemoryTypeSchema = z.enum(['preference', 'project_context', 'decision', 'person', 'profile', 'general']);
 const ScopeSchema = z.enum(['global', 'project', 'preference', 'decision', 'person', 'profile', 'all']).optional();
@@ -28,8 +28,9 @@ export const createMemoryMcpServer = (auth: AuthContext, service: MemoryService)
       instructions: [
         'This server is the user-owned shared memory vault for durable AI context.',
         'Use search_memory before answering questions that may depend on the user’s preferences, projects, decisions, prior context, or personal workflows.',
-        'Use save_memory only when the user explicitly asks to remember something or the information is clearly stable, low-risk, and useful for future conversations.',
-        'Use propose_memory_update when the memory is inferred, broad, uncertain, or sensitive. Do not save secrets, credentials, or transient details.',
+        'Use save_memory for durable, low-risk context that is likely to be useful in future sessions, including stable user preferences, project facts, decisions, constraints, corrections, and recurring workflows.',
+        'Use propose_memory_update only when you are very unsure, the memory is ambiguous or potentially sensitive, or it would benefit from explicit human review before becoming canonical.',
+        'Do not save secrets, credentials, private keys, raw transcripts, one-time details, or sensitive personal information.',
         'Prefer project-specific tools for project-specific context so global memory stays clean.'
       ].join('\n')
     }
@@ -109,7 +110,7 @@ export const createMemoryMcpServer = (auth: AuthContext, service: MemoryService)
     {
       title: 'Save memory',
       description:
-        'Save durable memory directly to the canonical memory vault. Use when the user explicitly asks to remember something or the information is clearly stable, low-risk, and useful. Do not save secrets, credentials, sensitive personal data, or transient details.',
+        'Save durable memory directly to the canonical memory vault. Prefer this for stable, low-risk information that is likely to be useful in future sessions, such as user preferences, project facts, decisions, constraints, corrections, or recurring workflows. Do not save secrets, credentials, sensitive personal data, one-time details, or raw transcripts.',
       inputSchema: z.object({
         type: MemoryTypeSchema,
         title: z.string().min(1),
@@ -136,7 +137,7 @@ export const createMemoryMcpServer = (auth: AuthContext, service: MemoryService)
     {
       title: 'Propose memory update',
       description:
-        'Propose a memory update by writing to inbox/pending.md. Use for inferred, broad, uncertain, or sensitive memories that should be reviewed before becoming canonical.',
+        'Propose a memory update by writing to inbox/pending.md. Use this only when you are very unsure, the memory is ambiguous or potentially sensitive, or it should receive explicit human review before becoming canonical. For stable, low-risk durable context, prefer save_memory.',
       inputSchema: z.object({
         type: MemoryTypeSchema,
         title: z.string().min(1),

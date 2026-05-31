@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import type { MemoryType } from './types.js';
-import { ensureDir, ensureFile, firstHeadingOrFileName, relativeTo, safeJoin, slugify } from './util.js';
+import type { MemoryType } from './types';
+import { ensureDir, ensureFile, firstHeadingOrFileName, relativeTo, safeJoin, slugify } from './util';
 
 export type ParsedMemoryFile = {
   filePath: string;

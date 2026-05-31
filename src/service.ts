@@ -1,21 +1,21 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { Db } from './db.js';
-import type { MemoryType } from './types.js';
+import type { Db } from './db';
+import type { MemoryType } from './types';
 import {
   appendSection,
   destinationPathForType,
   initializeVault,
   writeDecisionFile
-} from './markdown.js';
+} from './markdown';
 import {
   getMemoryByIdOrPath,
   indexFile,
   listMemoryFiles,
   reindexVault,
   searchMemory
-} from './indexer.js';
+} from './indexer';
 import {
   escapeMarkdown,
   nowIso,
@@ -24,7 +24,7 @@ import {
   safeJoin,
   slugify,
   tagsToString
-} from './util.js';
+} from './util';
 
 export type MemoryServiceOptions = {
   vaultPath: string;
@@ -204,6 +204,14 @@ export class MemoryService {
       .filter((line) => line !== undefined)
       .join('\n');
     return `${metadata}\n\n${escapeMarkdown(input.content)}`;
+  }
+
+  recordAudit(toolName: string, sourceApp: string | undefined, action: string, targetFile: string | undefined, input: unknown, result: unknown): void {
+    this.audit(toolName, sourceApp, action, targetFile, input, result);
+  }
+
+  commitVaultChange(message: string): void {
+    this.gitCommit(message);
   }
 
   private audit(toolName: string, sourceApp: string | undefined, action: string, targetFile: string | undefined, input: unknown, result: unknown): void {

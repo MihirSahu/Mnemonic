@@ -1,6 +1,10 @@
 node_modules/
+.pnpm-store/
 dist/
-.env
-data/*.db
-data/*.db-*
+.next/
+tsconfig.tsbuildinfo
+.env*
+!.env.example
+data/
+memory/
 .DS_Store

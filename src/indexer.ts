@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { Db } from './db.js';
-import type { SearchFilters } from './types.js';
-import { chunkMarkdown, parseMemoryFile, walkMarkdownFiles } from './markdown.js';
-import { nowIso, parseCsv, randomId, relativeTo, sha256, tagsToString } from './util.js';
+import type { Db } from './db';
+import type { SearchFilters } from './types';
+import { chunkMarkdown, parseMemoryFile, walkMarkdownFiles } from './markdown';
+import { nowIso, parseCsv, randomId, relativeTo, sha256, tagsToString } from './util';
 
 const memoryIdForFile = (relativePath: string): string => `mem_${sha256(relativePath).slice(0, 24)}`;
 const chunkIdForFile = (relativePath: string, index: number): string => `chunk_${sha256(`${relativePath}:${index}`).slice(0, 24)}`;

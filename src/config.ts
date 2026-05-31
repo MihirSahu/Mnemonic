@@ -12,6 +12,8 @@ const numberFromEnv = (value: string | undefined, fallback: number): number => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+const resolvePath = (value: string): string => path.resolve(/* turbopackIgnore: true */ process.cwd(), value);
+
 export type AppConfig = {
   port: number;
   publicUrl: string;
@@ -26,8 +28,8 @@ export type AppConfig = {
 export const config: AppConfig = {
   port: numberFromEnv(process.env.PORT, 3000),
   publicUrl: process.env.PUBLIC_URL ?? `http://localhost:${numberFromEnv(process.env.PORT, 3000)}`,
-  vaultPath: path.resolve(process.env.MEMORY_VAULT_PATH ?? './memory'),
-  databasePath: path.resolve(process.env.DATABASE_PATH ?? './data/memory.db'),
+  vaultPath: resolvePath(process.env.MEMORY_VAULT_PATH ?? './memory'),
+  databasePath: resolvePath(process.env.DATABASE_PATH ?? './data/memory.db'),
   adminToken: process.env.MEMORY_ADMIN_TOKEN,
   gitEnabled: booleanFromEnv(process.env.GIT_ENABLED, false),
   defaultSearchLimit: numberFromEnv(process.env.DEFAULT_SEARCH_LIMIT, 8),

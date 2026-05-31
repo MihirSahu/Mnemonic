@@ -4,16 +4,20 @@ This repository implements a self-hosted Markdown-backed MCP memory server.
 
 ## Commands
 
-- Install: `npm install`
-- Dev server: `npm run dev`
-- Type check: `npm run check`
-- Build: `npm run build`
-- Reindex Markdown vault: `npm run reindex`
-- Create client token: `npm run client:create -- --name claude --scopes memory:read,memory:propose`
+- Install: `pnpm install`
+- Dev server: `pnpm dev`
+- Type check: `pnpm check`
+- Build: `pnpm build`
+- Test: `pnpm test`
+- Stdio MCP server: `pnpm stdio`
+- Reindex Markdown vault: `pnpm reindex`
+- Create client token: `pnpm client:create -- --name claude --scopes memory:read,memory:propose`
 
 ## Architecture
 
-- `src/server.ts` starts the Streamable HTTP MCP endpoint.
+- `app/mcp/route.ts` serves the Streamable HTTP MCP endpoint.
+- `app/api/admin/` contains the web admin APIs.
+- `app/(admin)/` contains the authenticated settings UI.
 - `src/mcp.ts` registers MCP tools.
 - `src/service.ts` performs writes to Markdown and audit logs.
 - `src/indexer.ts` parses Markdown and maintains SQLite FTS.
