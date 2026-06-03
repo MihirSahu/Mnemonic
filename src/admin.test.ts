@@ -268,6 +268,26 @@ test('pending proposals can be approved into canonical memory', () => {
   assert.equal(listPendingProposals(vaultPath).length, 0);
 });
 
+test('memory search returns chunk previews without full file content', () => {
+  const { service } = makeFixture();
+  service.saveMemory({
+    type: 'general',
+    title: 'Search payload shape',
+    content: [
+      'The searchable marker is mnemonic-search-preview.',
+      'This extra sentence should remain available through get_memory, but search results should not include a content field.'
+    ].join('\n'),
+    source_app: 'test',
+    reason: 'Verify search payloads stay lightweight.'
+  });
+
+  const [result] = service.search({ query: 'mnemonic-search-preview', include_pending: true });
+  assert.ok(result);
+  assert.equal('content' in result, false);
+  assert.match(result.chunk, /mnemonic-search-preview/);
+  assert.equal(result.file_path, 'MEMORY.md');
+});
+
 test('pending proposals can be dismissed into archive', () => {
   const { db, service, vaultPath } = makeFixture();
   fs.writeFileSync(

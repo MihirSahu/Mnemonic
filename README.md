@@ -56,9 +56,9 @@ Markdown files are human-readable and editable. SQLite can be rebuilt from Markd
 
 ### Read tools
 
-- `search_memory`
-- `get_memory`
-- `list_memory_files`
+- `search_memory`: searches durable memory and returns matching chunk previews with metadata, not full Markdown file contents.
+- `get_memory`: fetches a full memory item or Markdown file by id or file path.
+- `list_memory_files`: lists memory files with metadata only.
 
 ### Write/proposal tools
 

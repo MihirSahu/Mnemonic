@@ -41,7 +41,7 @@ export const createMemoryMcpServer = (auth: AuthContext, service: MemoryService)
     {
       title: 'Search memory',
       description:
-        'Search the user’s durable memory. Use this before answering questions that may depend on preferences, projects, decisions, prior context, or workflows.',
+        'Search the user’s durable memory and return matching chunk previews with metadata, not full file contents. Use this before answering questions that may depend on preferences, projects, decisions, prior context, or workflows. Call get_memory when the full Markdown file is needed.',
       inputSchema: z.object({
         query: z.string().min(1).describe('Search query.'),
         scope: ScopeSchema.describe('Optional scope filter.'),

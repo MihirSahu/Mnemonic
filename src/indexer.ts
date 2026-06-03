@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Db } from './db';
-import type { SearchFilters } from './types';
+import type { MemorySearchResult, SearchFilters } from './types';
 import { chunkMarkdown, parseMemoryFile, walkMarkdownFiles } from './markdown';
 import { nowIso, parseCsv, randomId, relativeTo, sha256, tagsToString } from './util';
 
@@ -98,21 +98,7 @@ const ftsQuery = (query: string): string => {
   return tokens.map((token) => `${token.replace(/"/g, '""')}*`).join(' OR ');
 };
 
-export type SearchResult = {
-  id: string;
-  title: string;
-  content: string;
-  chunk: string;
-  file_path: string;
-  score: number;
-  tags: string[];
-  type: string;
-  project?: string | null;
-  status: string;
-  updated_at: string;
-};
-
-export const searchMemory = (db: Db, filters: SearchFilters & { defaultLimit: number }): SearchResult[] => {
+export const searchMemory = (db: Db, filters: SearchFilters & { defaultLimit: number }): MemorySearchResult[] => {
   const limit = Math.min(Math.max(filters.limit ?? filters.defaultLimit, 1), 25);
   const where: string[] = [];
   const params: Record<string, unknown> = { query: ftsQuery(filters.query), limit };
@@ -141,7 +127,6 @@ export const searchMemory = (db: Db, filters: SearchFilters & { defaultLimit: nu
     SELECT
       m.id,
       m.title,
-      m.content,
       c.chunk_text AS chunk,
       m.file_path,
       bm25(memory_chunks_fts) * -1 AS score,
@@ -160,14 +145,13 @@ export const searchMemory = (db: Db, filters: SearchFilters & { defaultLimit: nu
   `);
 
   try {
-    const rows = stmt.all(params) as Array<Omit<SearchResult, 'tags'> & { tags: string | null }>;
+    const rows = stmt.all(params) as Array<Omit<MemorySearchResult, 'tags'> & { tags: string | null }>;
     return rows.map((row) => ({ ...row, tags: parseCsv(row.tags) }));
   } catch {
     const fallback = db.prepare(`
       SELECT
         m.id,
         m.title,
-        m.content,
         c.chunk_text AS chunk,
         m.file_path,
         0 AS score,
@@ -183,7 +167,7 @@ export const searchMemory = (db: Db, filters: SearchFilters & { defaultLimit: nu
       ORDER BY m.updated_at DESC
       LIMIT @limit
     `);
-    const rows = fallback.all({ ...params, like: `%${filters.query.toLowerCase()}%` }) as Array<Omit<SearchResult, 'tags'> & { tags: string | null }>;
+    const rows = fallback.all({ ...params, like: `%${filters.query.toLowerCase()}%` }) as Array<Omit<MemorySearchResult, 'tags'> & { tags: string | null }>;
     return rows.map((row) => ({ ...row, tags: parseCsv(row.tags) }));
   }
 };

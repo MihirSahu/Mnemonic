@@ -49,3 +49,16 @@ export type SearchFilters = {
   limit?: number;
   include_pending?: boolean;
 };
+
+export type MemorySearchResult = {
+  id: string;
+  title: string;
+  chunk: string;
+  file_path: string;
+  score: number;
+  tags: string[];
+  type: string;
+  project?: string | null;
+  status: string;
+  updated_at: string;
+};
